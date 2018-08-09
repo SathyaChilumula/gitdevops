@@ -1,190 +1,23 @@
-
 git config --global user.name "Sam Smith"
 git config --global user.email sam@example.com
 
-Create a new local repository	 	
-git init
-Check out a repository	Create a working copy of a local repository:	
-git clone /path/to/repository
-For a remote server, use:	
-git clone username@host:/path/to/repository
-Add files	Add one or more files to staging (index):	
-git add <filename>
+Interrupted workflow
+When you are in the middle of something, your boss comes in and demands that you fix something immediately. Traditionally, you would make a commit to a temporary branch to store your changes away, and return to your original branch to make the emergency fix, like this:
 
-git add *
-Commit	Commit changes to head (but not yet to the remote repository):	
-git commit -m "Commit message"
-Commit any files you've added with git add, and also commit any files you've changed since then:	
-git commit -a
-Push	Send changes to the master branch of your remote repository:	
-git push origin master
-Status	List the files you've changed and those you still need to add or commit:	
-git status
-Connect to a remote repository	If you haven't connected your local repository to a remote server, add the server to be able to push to it:	git remote add origin <server>
-List all currently configured remote repositories:	git remote -v
-Branches	Create a new branch and switch to it:	
-git checkout -b <branchname>
-Switch from one branch to another:	
-git checkout <branchname>
-List all the branches in your repo, and also tell you what branch you're currently in:	
-git branch
-Delete the feature branch:	
-git branch -d <branchname>
-Push the branch to your remote repository, so others can use it:	
-git push origin <branchname>
-Push all branches to your remote repository:	
-git push --all origin
-Delete a branch on your remote repository:	
-git push origin :<branchname>
-Update from the remote repository	Fetch and merge changes on the remote server to your working directory:	git pull
-To merge a different branch into your active branch:	
-git merge <branchname>
-View all the merge conflicts:
-View the conflicts against the base file:
+# ... hack hack hack ...
+$ git checkout -b my_wip
+$ git commit -a -m "WIP"
+$ git checkout master
+$ edit emergency fix
+$ git commit -a -m "Fix in a hurry"
+$ git checkout my_wip
+$ git reset --soft HEAD^
+# ... continue hacking ...
+You can use git stash to simplify the above, like this:
 
-Preview changes, before merging:
-
-git diff
-git diff --base <filename>
-
-git diff <sourcebranch> <targetbranch>
-After you have manually resolved any conflicts, you mark the changed file:	
-git add <filename>
-Tags	You can use tagging to mark a significant changeset, such as a release:	
-git tag 1.0.0 <commitID>
-CommitId is the leading characters of the changeset ID, up to 10, but must be unique. Get the ID using:	
-git log
-Push all tags to remote repository:	
-git push --tags origin
-Undo local changes	If you mess up, you can replace the changes in your working tree with the last content in head:
-Changes already added to the index, as well as new files, will be kept.
-
-git checkout -- <filename>
-Instead, to drop all your local changes and commits, fetch the latest history from the server and point your local master branch at it, do this:	
-git fetch origin
-
-git reset --hard origin/master
-Search	Search the working directory for foo():	git grep "foo()"
-
-Showing Your Remotes
-To see which remote servers you have configured, you can run the git remote command. It lists the shortnames of each remote handle you’ve specified. If you’ve cloned your repository, you should at least see origin — that is the default name Git gives to the server you cloned from:
-
-$ git clone https://github.com/schacon/ticgit
-Cloning into 'ticgit'...
-remote: Reusing existing pack: 1857, done.
-remote: Total 1857 (delta 0), reused 0 (delta 0)
-Receiving objects: 100% (1857/1857), 374.35 KiB | 268.00 KiB/s, done.
-Resolving deltas: 100% (772/772), done.
-Checking connectivity... done.
-$ cd ticgit
-$ git remote
-origin
-You can also specify -v, which shows you the URLs that Git has stored for the shortname to be used when reading and writing to that remote:
-
-$ git remote -v
-origin	https://github.com/schacon/ticgit (fetch)
-origin	https://github.com/schacon/ticgit (push)
-If you have more than one remote, the command lists them all. For example, a repository with multiple remotes for working with several collaborators might look something like this.
-
-$ cd grit
-$ git remote -v
-bakkdoor  https://github.com/bakkdoor/grit (fetch)
-bakkdoor  https://github.com/bakkdoor/grit (push)
-cho45     https://github.com/cho45/grit (fetch)
-cho45     https://github.com/cho45/grit (push)
-defunkt   https://github.com/defunkt/grit (fetch)
-defunkt   https://github.com/defunkt/grit (push)
-koke      git://github.com/koke/grit.git (fetch)
-koke      git://github.com/koke/grit.git (push)
-origin    git@github.com:mojombo/grit.git (fetch)
-origin    git@github.com:mojombo/grit.git (push)
-
-This line has been dublecated: bakkdoor  https://github.com/bakkdoor/grit (fetch)
-
-This means we can pull contributions from any of these users pretty easily. We may additionally have permission to push to one or more of these, though we can’t tell that here.
-
-Notice that these remotes use a variety of protocols; we’ll cover more about this in Getting Git on a Server.
-
-Adding Remote Repositories
-We’ve mentioned and given some demonstrations of how the git clone command implicitly adds the origin remote for you. Here’s how to add a new remote explicitly. To add a new remote Git repository as a shortname you can reference easily, run git remote add <shortname> <url>:
-
-$ git remote
-origin
-$ git remote add pb https://github.com/paulboone/ticgit
-$ git remote -v
-origin	https://github.com/schacon/ticgit (fetch)
-origin	https://github.com/schacon/ticgit (push)
-pb	https://github.com/paulboone/ticgit (fetch)
-pb	https://github.com/paulboone/ticgit (push)
-Now you can use the string pb on the command line in lieu of the whole URL. For example, if you want to fetch all the information that Paul has but that you don’t yet have in your repository, you can run git fetch pb:
-
-$ git fetch pb
-remote: Counting objects: 43, done.
-remote: Compressing objects: 100% (36/36), done.
-remote: Total 43 (delta 10), reused 31 (delta 5)
-Unpacking objects: 100% (43/43), done.
-From https://github.com/paulboone/ticgit
- * [new branch]      master     -> pb/master
- * [new branch]      ticgit     -> pb/ticgit
-Paul’s master branch is now accessible locally as pb/master — you can merge it into one of your branches, or you can check out a local branch at that point if you want to inspect it. (We’ll go over what branches are and how to use them in much more detail in Git Branching.)
-
-Fetching and Pulling from Your Remotes
-As you just saw, to get data from your remote projects, you can run:
-
-$ git fetch <remote>
-The command goes out to that remote project and pulls down all the data from that remote project that you don’t have yet. After you do this, you should have references to all the branches from that remote, which you can merge in or inspect at any time.
-
-If you clone a repository, the command automatically adds that remote repository under the name “origin”. So, git fetch origin fetches any new work that has been pushed to that server since you cloned (or last fetched from) it. It’s important to note that the git fetch command only downloads the data to your local repository — it doesn’t automatically merge it with any of your work or modify what you’re currently working on. You have to merge it manually into your work when you’re ready.
-
-If your current branch is set up to track a remote branch (see the next section and Git Branching for more information), you can use the git pull command to automatically fetch and then merge that remote branch into your current branch. This may be an easier or more comfortable workflow for you; and by default, the git clone command automatically sets up your local master branch to track the remote master branch (or whatever the default branch is called) on the server you cloned from. Running git pull generally fetches data from the server you originally cloned from and automatically tries to merge it into the code you’re currently working on.
-
-Pushing to Your Remotes
-When you have your project at a point that you want to share, you have to push it upstream. The command for this is simple: git push <remote> <branch>. If you want to push your master branch to your origin server (again, cloning generally sets up both of those names for you automatically), then you can run this to push any commits you’ve done back up to the server:
-
-$ git push origin master
-This command works only if you cloned from a server to which you have write access and if nobody has pushed in the meantime. If you and someone else clone at the same time and they push upstream and then you push upstream, your push will rightly be rejected. You’ll have to fetch their work first and incorporate it into yours before you’ll be allowed to push. See Git Branching for more detailed information on how to push to remote servers.
-
-Inspecting a Remote
-If you want to see more information about a particular remote, you can use the git remote show <remote> command. If you run this command with a particular shortname, such as origin, you get something like this:
-
-$ git remote show origin
-* remote origin
-  Fetch URL: https://github.com/schacon/ticgit
-  Push  URL: https://github.com/schacon/ticgit
-  HEAD branch: master
-  Remote branches:
-    master                               tracked
-    dev-branch                           tracked
-  Local branch configured for 'git pull':
-    master merges with remote master
-  Local ref configured for 'git push':
-    master pushes to master (up to date)
-It lists the URL for the remote repository as well as the tracking branch information. The command helpfully tells you that if you’re on the master branch and you run git pull, it will automatically merge in the master branch on the remote after it fetches all the remote references. It also lists all the remote references it has pulled down.
-
-That is a simple example you’re likely to encounter. When you’re using Git more heavily, however, you may see much more information from git remote show:
-
-$ git remote show origin
-* remote origin
-  URL: https://github.com/my-org/complex-project
-  Fetch URL: https://github.com/my-org/complex-project
-  Push  URL: https://github.com/my-org/complex-project
-  HEAD branch: master
-  Remote branches:
-    master                           tracked
-    dev-branch                       tracked
-    markdown-strip                   tracked
-    issue-43                         new (next fetch will store in remotes/origin)
-    issue-45                         new (next fetch will store in remotes/origin)
-    refs/remotes/origin/issue-11     stale (use 'git remote prune' to remove)
-  Local branches configured for 'git pull':
-    dev-branch merges with remote dev-branch
-    master     merges with remote master
-  Local refs configured for 'git push':
-    dev-branch                     pushes to dev-branch                     (up to date)
-    markdown-strip                 pushes to markdown-strip                 (up to date)
-    master                         pushes to master                         (up to date)
-This command shows which branch is automatically pushed to when you run git push while on certain branches. It also shows you which remote branches on the server you don’t yet have, which remote branches you have that have been removed from the server, and multiple local branches that are able to merge automatically with their remote-tracking branch when you run git pull.
-
-Renaming and Removing Remotes
-You can run git remote rename to change a remote’s shortname. For instance, if you want to rename pb to paul, you can do so with git remote rename:
-
+# ... hack hack hack ...
+$ git stash
+$ edit emergency fix
+$ git commit -a -m "Fix in a hurry"
+$ git stash pop
+# ... continue hacking ...
