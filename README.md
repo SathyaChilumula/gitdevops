@@ -118,3 +118,4 @@ logs/
 pattern*/
 Save a file with desired paterns as .gitignore with either direct string
 matches or wildcard globs.
+Sathya Chilumua
